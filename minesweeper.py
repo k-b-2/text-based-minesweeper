@@ -180,7 +180,7 @@ y = 10
 #Gen = BoardGenerator()
 
 #○■∙∙∙∙∙∙∙∙∙∙
-board = Board(10,10,3)
+board = Board(10,10,10)
 game = True
 
 board.PrintBoard(board.GetDisplayBoard())
