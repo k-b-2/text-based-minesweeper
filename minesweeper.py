@@ -1,5 +1,6 @@
 import random
 
+
 class Board():
 
     def __init__(self,x,y,mines):
@@ -7,18 +8,18 @@ class Board():
         self.__y = y
         self.__mines = mines
         
-        self.__board = BoardGenerator.randomBoard(self,x,y,mines)
+        self.__board = BoardGenerator.RandomBoard(x,y,mines)
         self.__displayBoard = [["[ ]" for i in range(x)] for j in range(y)]
     
-    def printBoard(self):
-        board = self.__displayBoard
-        print(("  A  B  C  D  E  F  G  H  I  J "))
+    def PrintBoard(self,board):
+
+        print((" A  B  C  D  E  F  G  H  I  J "))
         #print("","-" * (len(board[0])*2+1) )
 
         for i in range(len(board)):
     
             #print("|", end = '')
-            print(u"\u202F", end = '')
+            #print(u"\u202F", end = '')
             for j in range(len(board[i])):
                 print(str(board[i][j]) + "", end = '')
         
@@ -26,18 +27,74 @@ class Board():
             print(" ",chr(65+i))
         #print("","-" * (len(board[0])*2+1) )
         
+    def GenerateDisplayBoard(self, xGuess, yGuess, board, xLen, yLen, displayBoard):
 
-    def generateDisplayBoard(board):
-        print("") 
+
+        displayBoard[xGuess][yGuess] = " " + str(board[xGuess][yGuess]) + " "
+
+        allDisplayed = False
         
+        if board[xGuess][yGuess] == 0:
+
+            displayBoard[xGuess][yGuess] = "   "
+
+            currentX = xGuess
+            currentY = yGuess
+            emptySquares = []
+            checkedSquares = [(currentX,currentY)]
+            while not allDisplayed:
+                
+                for x in range(max(0,currentX-1),min(currentX+2,xLen)): # min/max ensures no index out of range error
+                    for y in range(max(0,currentY-1),min(currentY+2,yLen)):
+                        
+                        if board[x][y] == 0:
+
+                            if (x,y) not in checkedSquares and (x,y) not in emptySquares:
+                                
+                                emptySquares.append((x,y)) #ADDS to list to expand board so no empty values on border
+                                displayBoard[x][y] = "   "
+                            
+                        elif board[x][y] != "X":
+                            
+                            displayBoard[x][y] = " " + str(board[x][y]) + " "
+                            
+                if not emptySquares:
+                    allDisplayed = True
+                    break
+
+                if len(emptySquares) == 1:
+                    index = 0
+                else:
+                    index = random.randint(0,len(emptySquares)-1)
+                currentX, currentY = emptySquares[index]
+                checkedSquares.append(emptySquares.pop(index))
+                
+
+        return displayBoard
+
+             
+            
+        
+    def GetDisplayBoard(self):
+        return self.__displayBoard
+    
+    def CheckGuess(self,xGuess,yGuess):
+        
+        if self.__board[xGuess][yGuess] == "X":
+            GameController.GameOver(self.__board)
+        else:
+            boardToPrint = self.GenerateDisplayBoard(xGuess, yGuess, self.__board, self.__x, self.__y, self.__displayBoard)
+            self.PrintBoard(boardToPrint)
+            
+
 
 #i suck at oop lol
 class BoardGenerator():
 
-    def randomBoard(self,x,y,mines):
+    def RandomBoard(x,y,mines):
         
         board = [[0 for i in range(x)] for j in range(y)]
-        minePositions = {}
+        minePositions = {}#NEEDS TO BE CHANGED. DICTIONARY NEEDS UNIQUE KEYS - ONLY ALLOWS ONE MINE PER X VALUE!!!!!!!!
         
         for i in range(mines):
             xpos = random.randint(0,x-1)
@@ -64,18 +121,30 @@ class BoardGenerator():
                                
                     board[i][j] = mineCount
         return board
+
+
+class GameController():
+
+    def GameOver(board):
+        print("You lose.")
+
+    def MakeGuess(guess):
+        x = ord(guess[0])-65
+        y = ord(guess[1])-65
+        print(x,y)
+        board.CheckGuess(x,y)
         
 
 print("Syntax: Enter letters of the co-ordinatese of where you'd like to guess, column then row. E.g 'BG'")
 x = 10
 y = 10
 
-Gen = BoardGenerator()
-board = Gen.randomBoard(10,10,12)
+#Gen = BoardGenerator()
+board = BoardGenerator.RandomBoard(10,10,12)
 #○■∙∙∙∙∙∙∙∙∙∙
 board = Board(10,10,12)
 
-board.printBoard()
-guess = input("Co-ords")
+
+GameController.MakeGuess(input("Coordinate: "))
 
 
