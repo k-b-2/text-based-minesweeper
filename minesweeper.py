@@ -15,10 +15,11 @@ class Board():
         return self.__board
     
     def PrintBoard(self,board):
+        print(" ", end='')
+        for i in range(len(board)):
+            print(chr(65+i),' ', end='')
 
-        print((" A  B  C  D  E  F  G  H  I  J "))
-        #print("","-" * (len(board[0])*2+1) )
-
+        print("")
         for i in range(len(board)):
             
             for j in range(len(board[i])):
@@ -180,7 +181,7 @@ y = 10
 #Gen = BoardGenerator()
 
 #○■∙∙∙∙∙∙∙∙∙∙
-board = Board(10,10,10)
+board = Board(x,y,round((x*y)*0.12))
 game = True
 
 board.PrintBoard(board.GetDisplayBoard())
