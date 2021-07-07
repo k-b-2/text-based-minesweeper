@@ -156,15 +156,17 @@ class GameController():
 
     def GameOver(Board,win,):
         if win:
-            print("You win!")
+            print("You win!".center(40))
             
         else:
-            print("You lose.")
+            print("You lose.".center(40,'-'))
         
         board.PrintBoard(Board)
         global game
         game = False
-        input()
+        carryOn = input("Play again? Y/N\n")
+        if carryOn.upper() != "Y":
+            quit()
 
     def MakeGuess(guess):
         y = ord(guess[0])-65
@@ -172,17 +174,78 @@ class GameController():
         print(x,y)
         board.CheckGuess(x,y)
         board.CheckWin()
+
+
+    def OptionSelect(option): 
+        if option == "E":
+            x = 9
+            y = 9
+            mines = 10
+        elif option == "M":
+            x = 16
+            y = 16
+            mines = 40
+        elif option == "H":
+            x = 24
+            y = 20
+            mines = 99
+        else:
+            try:
+                x,y,mines = option.split("X")
+                x = int(x)
+                y = int(y)
+                mines = int(mines)
+                if not x in range(2,31) or not y in range(2,31) or mines >= y*x:
+                    print("Your dimensions are invalid. Max size = 30, Min size = 2")
+                    option = input()
+                    x,y,mines == GameController.OptionSelect(option) #YIKES. recursive type beat. MUST CHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            except:
+                print("Invalid syntax. Please try again.")
+                option = input()
+                x,y,mines == GameController.OptionSelect(option) #YIKES. recursive type beat. MUST CHANGE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        return x,y,mines
+
+
+
+    def StartGame(game):
+        print("""Enter the dimensions of the minesweeper grid in the form WxHxMines,
+e.g 10x25x35 gives a grid of width 10, height 25, with 35 mines.
+
+OR
+
+Type in grid difficulty: E/M/H\n""")
+        option = input().upper()
+
+        x,y,mines = GameController.OptionSelect(option)
+        
+        board = Board(x,y,mines)
+        board.PrintBoard(board.GetDisplayBoard())
+        print("Syntax: Enter letters of the co-ordinatese of where you'd like to guess, column then row. E.g 'BG'")
+        game = True
+        return board
+        
+            
+game = False
+
+while __name__ == "__main__":
+    if not game:
+        board = GameController.StartGame(game)
+        game = True
+    else:
+        GameController.MakeGuess(input("Coordinate: ").upper())
+
+
+
+
         
 
-print("Syntax: Enter letters of the co-ordinatese of where you'd like to guess, column then row. E.g 'BG'")
 x = 10
 y = 10
 
-#Gen = BoardGenerator()
-
 #○■∙∙∙∙∙∙∙∙∙∙
-board = Board(x,y,round((x*y)*0.12))
-game = True
+board = Board(x,y,)
+
 
 board.PrintBoard(board.GetDisplayBoard())
 
