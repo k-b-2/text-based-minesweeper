@@ -108,14 +108,16 @@ class Board():
                     continue
                 elif disp == "   " and bd == '0':
                     continue
-                elif disp == "[ ]" and bd == "X":
+                elif (disp == "[ ]" or disp == "[∆]") and bd == "X":
                     continue
                 else:
                     win = False
         if win:
             GameController.GameOver(board,True)
                 
-        
+    def PlaceFlag(self,x,y):
+        self.__displayBoard[x][y] = "[∆]"
+        self.PrintBoard(self.__displayBoard)
 
 #i suck at oop lol
 class BoardGenerator():
@@ -167,16 +169,31 @@ class GameController():
         input()
 
     def MakeGuess(guess):
-        y = ord(guess[0])-65
-        x = ord(guess[1])-65
-        print(x,y)
-        board.CheckGuess(x,y)
-        board.CheckWin()
+        try:
+            flag = False
+            y = ord(guess[0])-65
+            x = ord(guess[1])-65
+            try:
+                if guess[2] == "F":
+                    flag = True
+                else:
+                    print("Wrong syntax. Please try again.")####chang. HCANGENGAEGHWUIERHYUWER389R89YEGUWEUIYU
+            except:
+                print("")
+            print(x,y)
+            if flag:
+                board.PlaceFlag(x,y)
+            else:
+                board.CheckGuess(x,y)
+                board.CheckWin()
+        except:    
+            print("Wrong syntax. Please try again.")
         
 
-print("Syntax: Enter letters of the co-ordinatese of where you'd like to guess, column then row. E.g 'BG'")
-x = 10
-y = 10
+print("Syntax: Enter letters of the coordinates of where you'd like to guess, column then row. E.g 'BG'")
+print("Add 'F' to the end of your guess to place a flag in that spot. E.g 'BGF'")
+x = 20
+y = 20
 
 #Gen = BoardGenerator()
 
@@ -186,7 +203,7 @@ game = True
 
 board.PrintBoard(board.GetDisplayBoard())
 
-while game:
+while game == True:
     GameController.MakeGuess(input("Coordinate: ").upper())
 
 
