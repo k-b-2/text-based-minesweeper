@@ -11,12 +11,17 @@ class Board():
         self.__board = BoardGenerator.RandomBoard(x,y,mines)
         self.__displayBoard = [["[ ]" for i in range(x)] for j in range(y)]
 
+    def GetY(self):
+        return self.__y
+    def GetX(self):
+        return self.__x
+    
     def GetBoard(self):
         return self.__board
     
     def PrintBoard(self,board):
         print(" ", end='')
-        for i in range(len(board)):
+        for i in range(len(board[0])):
             print(chr(65+i),' ', end='')
 
         print("")
@@ -108,21 +113,24 @@ class Board():
                     continue
                 elif disp == "   " and bd == '0':
                     continue
-                elif disp == "[ ]" and bd == "X":
+                elif (disp == "[ ]" or disp == "[∆]") and bd == "X":
                     continue
                 else:
                     win = False
         if win:
             GameController.GameOver(board,True)
                 
-        
+    def PlaceFlag(self,x,y):
+        self.__displayBoard[x][y] = "[∆]"
+        self.PrintBoard(self.__displayBoard)
 
 #i suck at oop lol
 class BoardGenerator():
 
     def RandomBoard(x,y,mines):
         
-        board = [[0 for i in range(x)] for j in range(y)]
+        board = [[0 for i in range(y)] for j in range(x)]
+        print(board)
         minePositions = {} #MUST BE CHANGED - accidentally used dictionary here - doesn't store all mine positions, currently doesn't cause any problems but may do so in future.
         
         for i in range(mines):
@@ -169,11 +177,24 @@ class GameController():
             quit()
 
     def MakeGuess(guess):
-        y = ord(guess[0])-65
-        x = ord(guess[1])-65
-        print(x,y)
-        board.CheckGuess(x,y)
-        board.CheckWin()
+        try:
+
+            y = ord(guess[0])-65
+            x = ord(guess[1])-65
+            if len(guess) == 3:
+                if guess[2] == "F":
+                    board.PlaceFlag(x,y)
+                else:
+                    print("Wrong syntax. Please try again.")####chang. HCANGENGAEGHWUIERHYUWER389R89YEGUWEUIYU
+            else:
+                if y in range(0,board.GetY()) and x in range(0,board.GetY()):
+                    print("")
+                    board.CheckGuess(x,y)
+                    board.CheckWin()
+                else:
+                    print("Guess out of range.")
+        except:    
+            print("Wrong syntax. Please try again.")
 
 
     def OptionSelect(option): 
@@ -221,7 +242,8 @@ Type in grid difficulty: E/M/H\n""")
         
         board = Board(x,y,mines)
         board.PrintBoard(board.GetDisplayBoard())
-        print("Syntax: Enter letters of the co-ordinatese of where you'd like to guess, column then row. E.g 'BG'")
+        print("Syntax: Enter letters of the coordinates of where you'd like to guess, column then row. E.g 'BG'")
+        print("Add 'F' to the end of your guess to place a flag in that spot. E.g 'BGF'")
         game = True
         return board
         
@@ -253,3 +275,4 @@ while game:
     GameController.MakeGuess(input("Coordinate: ").upper())
 
 
+  
